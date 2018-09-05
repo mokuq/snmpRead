@@ -4,7 +4,7 @@ import sys #modul for reading command line arguments
 from pysnmp.entity.rfc3413.oneliner import cmdgen # snmp requests
 import pysnmp# exception while hostname is bad IPv4/UDP transport address pysnmp.error.PySnmpError
 
-print ('This program is collecting data from printers Xerox.')
+print ('This program is collecting data from printers.')
 print ('Creator: Viktor Ilienko')
 
 # current directory
@@ -44,7 +44,7 @@ def dataList(hostname):
 				lst.append(None)
 			# adding host's IP 
 		except pysnmp.error.PySnmpError:
-			pass 
+			return None 
 	if len(lst)!=0:
 		lst.insert(2, hostname)
 	return lst	
@@ -77,7 +77,9 @@ clicks.insert(0, ('model sn ip bw bwA3 col  colA3 pagesTotal').split() )
 for hostname in f:
 	if 	hostname:
 		lst = dataList (hostname[0])
-		clicks.append(lst)
+		# if received None than lst is not adding
+		if lst:
+			clicks.append(lst)
 
 
 filename = script_dir + "/" + 'serialized_data.csv'
