@@ -3,6 +3,10 @@ from csv import writer, reader # modul for csv
 import sys #modul for reading command line arguments
 from pysnmp.entity.rfc3413.oneliner import cmdgen # snmp requests
 import pysnmp# exception while hostname is bad IPv4/UDP transport address pysnmp.error.PySnmpError
+
+print ('This program is collecting data from printers Xerox.')
+print ('Creator: Viktor Ilienko')
+
 # current directory
 script_dir = path.dirname(path.abspath(__file__))
 
@@ -52,7 +56,7 @@ try:
 except (IndexError, FileNotFoundError):
 	try:
 		f = open(script_dir + "/" + 'rawdata.txt', newline='')
-		print ("Opening rawdata and traveling thrue values, please, wait...") 
+		print ("Opening rawdata.txt and traveling thrue values, please, wait...") 
 	except FileNotFoundError:
 		print("Enter/Paste IP addresses. Ctrl-D or Ctrl-Z ( Windows ) to save it.")
 		contents = []
@@ -89,11 +93,6 @@ except (NameError, AttributeError):
 
 # waiting for hiting enter
 try:
-	print ('''\n
-This program is collecting data from printers Xerox.
-	
-Creator: Viktor Ilienko
-		''')
 	input("Press enter to close the program")
 except SyntaxError:
     pass
