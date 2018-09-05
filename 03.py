@@ -1,33 +1,19 @@
-'''
-Description	OID
-sn	.1.3.6.1.4.1.253.8.53.3.2.1.3.1
-bwTotal	.1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.34
-colTotal	.1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.33
-bwA3	.1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.44
-colA3	.1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.43
-
-oids = {'sn': ".1.3.6.1.4.1.253.8.53.3.2.1.3.1",
-		'bwTotal': ".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.34", 
-		'colTotal': ".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.33", 
-		'bwA3': ".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.44",
-		'colA3': ".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.43"
-		}
-'''
-
 from os import path # os needed for folder and file address
 from csv import writer, reader # modul for csv
 import sys #modul for reading command line arguments
 from pysnmp.entity.rfc3413.oneliner import cmdgen # snmp requests
-
+import pysnmp# exception while hostname is bad IPv4/UDP transport address pysnmp.error.PySnmpError
 # current directory
 script_dir = path.dirname(path.abspath(__file__))
 
-# list of oid: sn, bwTotal, colTotal, bwA3, colA3 
-oids = (".1.3.6.1.4.1.253.8.53.3.2.1.3.1", 
+# list of oid: model, sn,  bwTotal, bwA3, colTotal,  colA3, pagesTotal 
+oids = (".1.3.6.1.2.1.25.3.2.1.3.1",
+		".1.3.6.1.2.1.43.5.1.1.17.1", 
 		".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.34", 
-		".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.33", 
 		".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.44",
-		".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.43")
+		".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.33", 
+		".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.43",
+		".1.3.6.1.2.1.43.10.2.1.4.1.1")
 
 # from pysnmp
 cmdGen = cmdgen.CommandGenerator()
@@ -40,29 +26,35 @@ def dataList(hostname):
 	# trevelind thrue oids
 	for key	in oids:
 		#getting value of concrete oid
-		errorIndication, errorStatus, errorIndex, varBinds = cmdGen.getCmd(
-		    cmdgen.CommunityData('public'),
-		    cmdgen.UdpTransportTarget((hostname, 161)),
-		    key
-		)
 		try:
-			value = varBinds[0][1]
-			# if value is absend, than we add None
-			lst.append(str(value))
-		except IndexError:
-				lst.append(None)	
-
-	lst.insert(1, hostname)
+			errorIndication, errorStatus, errorIndex, varBinds = cmdGen.getCmd(
+			    cmdgen.CommunityData('public'),
+			    cmdgen.UdpTransportTarget((hostname, 161)),
+			    key
+			)
+			# if value is absend, than we add None, otherwise adding value
+			try:
+				value = varBinds[0][1]
+				lst.append(str(value))
+			except IndexError:
+				lst.append(None)
+			# adding host's IP 
+		except pysnmp.error.PySnmpError:
+			pass 
+	if len(lst)!=0:
+		lst.insert(2, hostname)
 	return lst	
+
 
 # receiving list of IP:
 try: 
 	f = open(sys.argv[1]) 
 except (IndexError, FileNotFoundError):
 	try:
-		f = open(script_dir + "/" + 'rawdata.txt', newline='') 
+		f = open(script_dir + "/" + 'rawdata.txt', newline='')
+		print ("Opening rawdata and traveling thrue values, please, wait...") 
 	except FileNotFoundError:
-		print("Enter/Paste your content. Ctrl-D or Ctrl-Z ( windows ) to save it.")
+		print("Enter/Paste IP addresses. Ctrl-D or Ctrl-Z ( Windows ) to save it.")
 		contents = []
 		while True:
 			try:
@@ -75,7 +67,7 @@ finally:
 	f = reader(f)	
 
 clicks = []
-clicks.insert(0, ('sn ip bw bwA3 col  colA3').split() )
+clicks.insert(0, ('model sn ip bw bwA3 col  colA3 pagesTotal').split() )
 
 
 for hostname in f:
@@ -97,6 +89,11 @@ except (NameError, AttributeError):
 
 # waiting for hiting enter
 try:
-    input("Press enter to continue")
+	print ('''\n
+This program is collecting data from printers Xerox.
+	
+Creator: Viktor Ilienko
+		''')
+	input("Press enter to close the program")
 except SyntaxError:
     pass
