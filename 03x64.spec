@@ -5,8 +5,8 @@ from os import path
 import os
 
 script_dir = path.dirname(path.abspath(SPEC))
-
-PyInstaller.config.CONF['workpath'] = "C:\\tmp\\garbage"
+pathtoGarbage = "C:\\tmp\\garbage"
+PyInstaller.config.CONF['workpath'] = pathtoGarbage
 PyInstaller.config.CONF['distpath'] = os.path.join(script_dir, 'dist')
 
 block_cipher = None
@@ -14,7 +14,7 @@ block_cipher = None
 hiddenimports = ['pysnmp.smi.exval','pysnmp.cache']
 
 a = Analysis(['03.py'],
-             pathex=['C:\\repo\\snmpRead'],
+             pathex=[script_dir],
              binaries=[],
              datas=PyInstaller.utils.hooks.collect_data_files('pysnmp'),
              hiddenimports=PyInstaller.utils.hooks.collect_submodules('pysmi')+\
@@ -38,7 +38,7 @@ exe = EXE(pyz,
          a.zipfiles,
          a.datas,
          x, y,
-         name='03x64',
+         name='countersx64',
          debug=False,
          strip=False,
          upx=True,

@@ -5,10 +5,9 @@ from os import path
 import os
 
 script_dir = path.dirname(path.abspath(SPEC))
-
-PyInstaller.config.CONF['workpath'] = "C:\\tmp\\garbage"
+pathtoGarbage = "C:\\tmp\\garbage"
+PyInstaller.config.CONF['workpath'] = pathtoGarbage
 PyInstaller.config.CONF['distpath'] = os.path.join(script_dir, 'dist')
-
 
 block_cipher = None
 
@@ -39,7 +38,7 @@ exe = EXE(pyz,
          a.zipfiles,
          a.datas,
          x, y,
-         name='03x86',
+         name='countersx86',
          debug=False,
          strip=False,
          upx=True,
