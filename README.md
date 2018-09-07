@@ -1,7 +1,8 @@
 # snmpRead
 Discovering printers data via snmp. 
+It is receiving via snmp sn and information about total clicks: bw, bwA3 (large), color, colA3 (large), total impressions.
 
-Version alfa, build 002.
+Version alfa, build 003.
 
 Creator Viktor Ilienko.
 

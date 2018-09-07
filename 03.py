@@ -85,13 +85,30 @@ for hostname in f:
 		# if received None than lst is not adding
 		clicks.append(lst)
 
+from flask import Flask
+	
+app = Flask(__name__)
 
-filename = script_dir + "/" + 'serialized_data.csv'
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
 
-with open(filename, 'w', newline='') as writeFile:
-	writer = writer(writeFile)
-	for line in clicks:
-		writer.writerow(line)
+@app.route('/data')
+def data_printers():
+    return str(clicks)
+
+
+
+app.run(host='127.0.0.1', port=5000, debug=True)
+
+
+
+# filename = script_dir + "/" + 'serialized_data.csv'
+
+# with open(filename, 'w', newline='') as writeFile:
+# 	writer = writer(writeFile)
+# 	for line in clicks:
+# 		writer.writerow(line)
 try:
 	f.close()
 except (NameError, AttributeError):
