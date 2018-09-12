@@ -2,7 +2,7 @@
 Discovering printers data via snmp. 
 It is receiving via snmp sn and information about total clicks: bw, bwA3 (large), color, colA3 (large), total impressions.
 
-Version alfa, build 003.
+Version alfa, build 004.
 
 Creator Viktor Ilienko.
 

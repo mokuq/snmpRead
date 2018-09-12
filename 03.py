@@ -3,8 +3,9 @@ from csv import writer, reader # modul for csv
 import sys #modul for reading command line arguments
 from pysnmp.entity.rfc3413.oneliner import cmdgen # snmp requests
 import pysnmp# exception while hostname is bad IPv4/UDP transport address pysnmp.error.PySnmpError
+import datetime # date and time in a name of outpu file
 
-print ('This program is collecting data from printers.')
+print ('This program is collecting data from printers via SNMP.')
 print ('Creator: Viktor Ilienko')
 
 # current directory
@@ -85,30 +86,12 @@ for hostname in f:
 		# if received None than lst is not adding
 		clicks.append(lst)
 
-from flask import Flask
-	
-app = Flask(__name__)
+filename = script_dir + "\\" + 'serialized_data' + datetime.datetime.now().strftime("%I-%M-%d-%m-%Y")+'.csv'
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
-
-@app.route('/data')
-def data_printers():
-    return str(clicks)
-
-
-
-app.run(host='127.0.0.1', port=5000, debug=True)
-
-
-
-# filename = script_dir + "/" + 'serialized_data.csv'
-
-# with open(filename, 'w', newline='') as writeFile:
-# 	writer = writer(writeFile)
-# 	for line in clicks:
-# 		writer.writerow(line)
+with open(filename, 'w', newline='') as writeFile:
+	writer = writer(writeFile)
+	for line in clicks:
+		writer.writerow(line)
 try:
 	f.close()
 except (NameError, AttributeError):
@@ -116,6 +99,7 @@ except (NameError, AttributeError):
 
 # waiting for hiting enter
 try:
+	print (f"You can find data from discovered printers in a file {filename}")
 	input("Press enter to close the program")
 except SyntaxError:
     pass
