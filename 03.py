@@ -28,7 +28,7 @@ def dataList(hostname):
 	# session = Session(hostname=hostname, community='public', version=2)
 	# creating a list of values
 	lst = list()
-	# trevelind thrue oids
+	# trevelind thru oids
 	for key	in oids:
 		#getting value of concrete oid
 		try:
@@ -57,7 +57,7 @@ try:
 except (IndexError, FileNotFoundError):
 	try:
 		f = open(script_dir + "/" + 'rawdata.txt', newline='')
-		print ("Opening rawdata.txt and traveling thrue values, please, wait...") 
+		print ("Opening rawdata.txt and traveling thru values, please, wait...") 
 	except FileNotFoundError:
 		print("Enter/Paste IP addresses. Ctrl-D or Ctrl-Z ( Windows ) to save it.")
 		contents = []
