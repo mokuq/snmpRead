@@ -89,7 +89,7 @@ for hostname in f:
 	except IndexError:
 		pass
 
-filename = script_dir + "\\" + 'serialized_data' + datetime.datetime.now().strftime("%I-%M-%d-%m-%Y")+'.csv'
+filename = script_dir + "\\" + 'serialized_data' + datetime.datetime.now().strftime("%S-%M-%H-%d-%m-%Y")+'.csv'
 
 with open(filename, 'w', newline='') as writeFile:
 	writer = writer(writeFile)
