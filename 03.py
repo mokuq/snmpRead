@@ -76,6 +76,7 @@ clicks.insert(0, ('model sn ip bw bwA3 col  colA3 pagesTotal').split() )
 
 
 for hostname in f:
+	try: 
 		print ("Discovering data from", hostname[0])
 		# checking typo in IP addresses
 		if hostname[0][0].isalpha() or not ("." in hostname[0]):
@@ -85,6 +86,8 @@ for hostname in f:
 		lst = dataList (hostname[0])
 		# if received None than lst is not adding
 		clicks.append(lst)
+	except IndexError:
+		pass
 
 filename = script_dir + "\\" + 'serialized_data' + datetime.datetime.now().strftime("%I-%M-%d-%m-%Y")+'.csv'
 
