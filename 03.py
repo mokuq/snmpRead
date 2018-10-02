@@ -11,13 +11,21 @@ print ('Creator: Viktor Ilienko')
 # current directory
 script_dir = path.dirname(path.abspath(__file__))
 
-# list of oid: model, sn,  bwTotal, bwA3, colTotal,  colA3, pagesTotal 
-oids = (".1.3.6.1.2.1.25.3.2.1.3.1",
-		".1.3.6.1.2.1.43.5.1.1.17.1", 
+# list of oid: sn,  bwTotal, bwA3, colTotal,  colA3, pagesTotal 
+# Xerox 
+oidsXerox = (".1.3.6.1.2.1.43.5.1.1.17.1", 
 		".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.34", 
 		".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.44",
 		".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.33", 
 		".1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.43",
+		".1.3.6.1.2.1.43.10.2.1.4.1.1")
+
+# HP
+oidsHP = (".1.3.6.1.2.1.43.5.1.1.17.1", 
+		".1.3.6.1.4.1.11.2.3.9.4.2.1.4.1.2.6.0",
+		".1.3.6.1.4.1.11.2.3.9.4.2.1.1.16.1.1.11.27.0",
+		".1.3.6.1.4.1.11.2.3.9.4.2.1.4.1.2.7.0", 
+		".1.3.6.1.4.1.11.2.3.9.4.2.1.1.16.3.1.1.27.0",
 		".1.3.6.1.2.1.43.10.2.1.4.1.1")
 
 # from pysnmp
@@ -28,6 +36,29 @@ def dataList(hostname):
 	# session = Session(hostname=hostname, community='public', version=2)
 	# creating a list of values
 	lst = list()
+
+	# checking is it Xerox or HP
+	try:
+		errorIndication, errorStatus, errorIndex, varBinds = cmdGen.getCmd(
+		    cmdgen.CommunityData('public'),
+		    cmdgen.UdpTransportTarget((hostname, 161)),
+		    ".1.3.6.1.2.1.25.3.2.1.3.1"
+		)
+		# if value is absend, than we add None, otherwise adding value
+		try:
+			model = str(varBinds[0][1])
+		except IndexError:
+			model = " "
+	except pysnmp.error.PySnmpError:
+		model = " "
+
+	lst.append(model)
+
+	if model[0].lower() == "h":
+		oids = oidsHP
+	else:
+		oids = oidsXerox
+
 	# trevelind thru oids
 	for key	in oids:
 		#getting value of concrete oid
@@ -43,9 +74,9 @@ def dataList(hostname):
 				lst.append(str(value))
 			except IndexError:
 				lst.append(None)
-			# adding host's IP 
 		except pysnmp.error.PySnmpError:
 			return None 
+	# adding host's IP 
 	if len(lst)!=0:
 		lst.insert(2, hostname)
 	return lst	
@@ -57,9 +88,9 @@ try:
 except (IndexError, FileNotFoundError):
 	try:
 		f = open(script_dir + "/" + 'rawdata.txt', newline='')
-		print ("Opening rawdata.txt and traveling thru values, please, wait...") 
+		print ("Opening rawdata.txt and traveling thru IP addresses, please, wait...") 
 	except FileNotFoundError:
-		print("Enter/Paste IP addresses. Ctrl-D or Ctrl-Z ( Windows ) to save it.")
+		print("Enter/Paste IP addresses. Ctrl-Z to save it.")
 		contents = []
 		while True:
 			try:
@@ -89,7 +120,7 @@ for hostname in f:
 	except IndexError:
 		pass
 
-filename = script_dir + "\\" + 'serialized_data' + datetime.datetime.now().strftime("%S-%M-%H-%d-%m-%Y")+'.csv'
+filename = script_dir + "\\" + 'Counters_' + datetime.datetime.now().strftime("%S-%M-%H-%d-%m-%Y")+'.csv'
 
 with open(filename, 'w', newline='') as writeFile:
 	writer = writer(writeFile)
