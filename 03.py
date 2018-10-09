@@ -6,7 +6,7 @@ import pysnmp# exception while hostname is bad IPv4/UDP transport address pysnmp
 import datetime # date and time in a name of outpu file
 
 print ('This program is collecting data from printers via SNMP.')
-print ('Creator: Viktor Ilienko')
+print ('Creator: Victor Ilyenko, victor.ilyenko@xerox.com')
 
 # current directory
 script_dir = path.dirname(path.abspath(__file__))
