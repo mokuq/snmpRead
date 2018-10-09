@@ -1,2 +1,6 @@
 # ignoring all created reports
 *.csv
+compile.bat
+03x64.spec
+03x86.spec
+1/*
