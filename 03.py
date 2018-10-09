@@ -46,7 +46,7 @@ def dataList(hostname):
 		)
 		# if value is absend, than we add None, otherwise adding value
 		try:
-			model = str(varBinds[0][1])
+			model = str(varBinds[0][1]).replace(";","")
 		except IndexError:
 			model = " "
 	except pysnmp.error.PySnmpError:
@@ -87,7 +87,7 @@ try:
 	f = open(sys.argv[1]) 
 except (IndexError, FileNotFoundError):
 	try:
-		f = open(script_dir + "/" + 'rawdata.txt', newline='')
+		f = open(script_dir + "/" + 'iplist.txt', newline='')
 		print ("Opening rawdata.txt and traveling thru IP addresses, please, wait...") 
 	except FileNotFoundError:
 		print("Enter/Paste IP addresses. Ctrl-Z to save it.")
