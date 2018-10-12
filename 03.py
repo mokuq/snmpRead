@@ -7,6 +7,7 @@ import datetime # date and time in a name of outpu file
 
 print ('This program is collecting data from printers via SNMP.')
 print ('Creator: Victor Ilyenko, victor.ilyenko@xerox.com')
+print ('Usage: insert IP addresses to file iplist.txt, new IP in a new line or type IPs')
 
 # current directory
 script_dir = path.dirname(path.abspath(__file__))
@@ -88,7 +89,7 @@ try:
 except (IndexError, FileNotFoundError):
 	try:
 		f = open(script_dir + "/" + 'iplist.txt', newline='')
-		print ("Opening rawdata.txt and traveling thru IP addresses, please, wait...") 
+		print ("Opening iplist.txt and traveling thru IP addresses, please, wait...") 
 	except FileNotFoundError:
 		print("Enter/Paste IP addresses. Ctrl-Z to save it.")
 		contents = []
