@@ -6,3 +6,4 @@ compile.bat
 __pycache__/*
 build/*
 03.ico
+pysnmp.py

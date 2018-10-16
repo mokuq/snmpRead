@@ -4,6 +4,10 @@ import sys #modul for reading command line arguments
 from pysnmp.entity.rfc3413.oneliner import cmdgen # snmp requests
 import pysnmp# exception while hostname is bad IPv4/UDP transport address pysnmp.error.PySnmpError
 import datetime # date and time in a name of outpu file
+# from pysnmp import debug
+# debug.setLogger(debug.Debug('all'))
+from pysnmp.hlapi import *
+
 
 print ('This program is collecting data from printers via SNMP.')
 print ('Creator: Victor Ilyenko, victor.ilyenko@xerox.com')
@@ -29,8 +33,15 @@ oidsHP = (".1.3.6.1.2.1.43.5.1.1.17.1",
 		".1.3.6.1.4.1.11.2.3.9.4.2.1.1.16.3.1.1.27.0",
 		".1.3.6.1.2.1.43.10.2.1.4.1.1")
 
-# from pysnmp
-cmdGen = cmdgen.CommandGenerator()
+# Canon
+oidsCanon=(".1.3.6.1.2.1.43.5.1.1.17.1", 
+		".1.3.6.1.4.1.1602.1.11.1.3.1.4.113", 
+		".1.3.6.1.4.1.1602.1.11.1.3.1.4.112",
+		".1.3.6.1.4.1.1602.1.11.1.3.1.4.123", 
+		".1.3.6.1.4.1.1602.1.11.1.3.1.4.122",
+		".1.3.6.1.4.1.1602.1.11.1.3.1.4.101")
+
+
 
 # creating a list of data from snmp requests
 def dataList(hostname):
@@ -38,13 +49,16 @@ def dataList(hostname):
 	# creating a list of values
 	lst = list()
 
-	# checking is it Xerox or HP
+	# checking is it Xerox or HP 
 	try:
-		errorIndication, errorStatus, errorIndex, varBinds = cmdGen.getCmd(
-		    cmdgen.CommunityData('public'),
-		    cmdgen.UdpTransportTarget((hostname, 161)),
-		    ".1.3.6.1.2.1.25.3.2.1.3.1"
-		)
+		modeliod = ".1.3.6.1.2.1.25.3.2.1.3.1"
+		errorIndication, errorStatus, errorIndex, varBinds = next(
+		    getCmd(SnmpEngine(),
+		           CommunityData('public', mpModel=0),
+		           UdpTransportTarget((hostname, 161)),
+		           ContextData(),
+		           ObjectType(ObjectIdentity(modeliod))) )
+
 		# if value is absend, than we add None, otherwise adding value
 		try:
 			model = str(varBinds[0][1]).replace(";","")
@@ -57,18 +71,21 @@ def dataList(hostname):
 
 	if model[0].lower() == "h":
 		oids = oidsHP
+	if model[0].lower() == "c":
+		oids = oidsCanon
 	else:
 		oids = oidsXerox
 
 	# trevelind thru oids
-	for key	in oids:
+	for oid	in oids:
 		#getting value of concrete oid
 		try:
-			errorIndication, errorStatus, errorIndex, varBinds = cmdGen.getCmd(
-			    cmdgen.CommunityData('public'),
-			    cmdgen.UdpTransportTarget((hostname, 161)),
-			    key
-			)
+			errorIndication, errorStatus, errorIndex, varBinds = next(
+			    getCmd(SnmpEngine(),
+			           CommunityData('public', mpModel=0),
+			           UdpTransportTarget((hostname, 161)),
+			           ContextData(),
+			           ObjectType(ObjectIdentity(oid))) )
 			# if value is absend, than we add None, otherwise adding value
 			try:
 				value = varBinds[0][1]
